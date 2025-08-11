@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!-- saved from url=(0055)https://fiddle.jshell.net/_display/?editor_console=true -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Calculate total sales of items</title>
+    
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script type="text/javascript" src="./dummy.js"></script>
+
+
+
+    <style id="compiled-css" type="text/css">
+      
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+      <script src="./stringify.js" charset="utf-8"></script>
+      <script>
+        const customConsole = (w) => {
+          const pushToConsole = (payload, type) => {
+            w.parent.postMessage({
+              console: {
+                payload: stringify(payload),
+                type:    type
+              }
+            }, "*")
+          }
+
+          w.onerror = (message, url, line, column) => {
+            // IMPORTANT: the line needs to correspond with the REF:LINE
+            // unfortunately this number needs to be altered every time this view is changed
+            line = line - 117
+            if (line < 0){
+              pushToConsole(message, "error")
+            } else {
+              pushToConsole(`[Line ${line}] ${message}`, "error")
+              // pushToConsole(`[${line}:${column}] ${message}`, "error")
+            }
+          }
+
+          let console = (function(systemConsole){
+            return {
+              log: function(){
+                let args = Array.from(arguments)
+                pushToConsole(args, "log")
+                systemConsole.log.apply(this, args)
+              },
+              info: function(){
+                let args = Array.from(arguments)
+                pushToConsole(args, "info")
+                systemConsole.info.apply(this, args)
+              },
+              warn: function(){
+                let args = Array.from(arguments)
+                pushToConsole(args, "warn")
+                systemConsole.warn.apply(this, args)
+              },
+              error: function(){
+                let args = Array.from(arguments) // REF:LINE
+                pushToConsole(args, "error")
+                systemConsole.error.apply(this, args)
+              },
+              system: function(arg){
+                pushToConsole(arg, "system")
+              },
+              clear: function(){
+                systemConsole.clear.apply(this, {})
+              },
+              time: function(){
+                let args = Array.from(arguments)
+                systemConsole.time.apply(this, args)
+              },
+              assert: function(assertion, label){
+                if (!assertion){
+                  pushToConsole(label, "log")
+                }
+
+                let args = Array.from(arguments)
+                systemConsole.assert.apply(this, args)
+              }
+            }
+          }(window.console))
+
+          window.console = { ...window.console, ...console }
+
+          console.system("Running fiddle")
+        }
+
+        if (window.parent){
+          customConsole(window)
+        }
+      </script>
+  </head>
+  <body>
+    
+  <script defer="" src="./vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;rayId&quot;:&quot;96b8c2366ae5f8f4&quot;,&quot;version&quot;:&quot;2025.7.0&quot;,&quot;r&quot;:1,&quot;token&quot;:&quot;95d4af946c9a4d229ea725f950960b54&quot;,&quot;serverTiming&quot;:{&quot;name&quot;:{&quot;cfExtPri&quot;:true,&quot;cfEdge&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfL4&quot;:true,&quot;cfSpeedBrain&quot;:true,&quot;cfCacheStatus&quot;:true}}}" crossorigin="anonymous"></script>
+
+
+    <script type="text/javascript">
+
+const order = [
+    { item: "Sandwich", quantity: 2, price: 3.5 },
+    { item: "Croissant", quantity: 3, price: 4.0 },
+    { item: "Cappuccino", quantity: 1, price: 4.5 }
+];
+
+function generateReceipt(order) {
+    let grandTotal = 0;
+    console.log("Receipt:");
+    for (let i = 0; i < order.length; i++) {
+        const itemTotal = order[i].quantity * order[i].price;
+        grandTotal += itemTotal;
+        console.log(`${order[i].item} - Quantity: ${order[i].quantity}, Price: $${order[i].price}, Total: $${itemTotal}`);
+    }
+    console.log(`Grand Total: $${grandTotal}`);
+}
+
+generateReceipt(order);
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: ""
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+        if (message.data.console){
+          let insert = document.querySelector("#insert")
+          allLines.push(message.data.console.payload)
+          insert.innerHTML = allLines.join(";\r")
+
+          let result = eval.call(null, message.data.console.payload)
+          if (result !== undefined){
+            console.log(result)
+          }
+        }
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
+</body></html>
